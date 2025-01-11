@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Windows.Forms;
 using FlightReservationSystem.BLL;
 
@@ -22,122 +23,106 @@ namespace FlightReservationSystem.GUI
         // Method to load all airplanes into the DataGridView
         private void LoadAirplanes()
         {
-            dataGridViewAirplanes.DataSource = airplaneBLL.GetAllAirplanes();
+            try
+            {
+                // Fetch data from BLL, which calls DAL to get data from DB
+                DataTable data = airplaneBLL.GetAllAirplanes();
+
+                // Bind the data to DataGridView
+                dataGridViewAirplanes.DataSource = data;
+
+                // Add Action Buttons (Edit and Delete) after binding the data
+                AddActionButtons();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+
         }
 
-        // Add new airplane
-        private void btnAdd_Click_1(object sender, EventArgs e)
+        private void AddActionButtons()
         {
-            string model = txtModel.Text;
-            int capacity = 0;
-            string manufacturer = txtManufacturer.Text;
-
-            // Validate input
-            if (string.IsNullOrWhiteSpace(model) || !int.TryParse(txtCapacity.Text, out capacity) || capacity <= 0 || string.IsNullOrWhiteSpace(manufacturer))
+            // Add Edit Button if not already added
+            if (!dataGridViewAirplanes.Columns.Contains("Edit"))
             {
-                MessageBox.Show("Please enter valid details for the airplane.");
-                return;
+                DataGridViewButtonColumn editButtonColumn = new DataGridViewButtonColumn();
+                editButtonColumn.Name = "Edit";
+                editButtonColumn.Text = "Edit";
+                editButtonColumn.UseColumnTextForButtonValue = true;
+                dataGridViewAirplanes.Columns.Add(editButtonColumn);
             }
 
-            // Call the BLL method to add the airplane
-            if (airplaneBLL.AddAirplane(model, capacity, manufacturer))
+            // Add Delete Button if not already added
+            if (!dataGridViewAirplanes.Columns.Contains("Delete"))
             {
-                MessageBox.Show("Airplane added successfully.");
-                LoadAirplanes(); // Refresh the DataGridView
-                ClearFields(); // Clear the input fields
-            }
-            else
-            {
-                MessageBox.Show("Failed to add airplane.");
+                DataGridViewButtonColumn deleteButtonColumn = new DataGridViewButtonColumn();
+                deleteButtonColumn.Name = "Delete";
+                deleteButtonColumn.Text = "Delete";
+                deleteButtonColumn.UseColumnTextForButtonValue = true;
+                dataGridViewAirplanes.Columns.Add(deleteButtonColumn);
             }
         }
 
-        // Update airplane details
-        private void btnUpdate_Click_1(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtAirplaneID.Text))
-            {
-                MessageBox.Show("Please enter a valid Airplane ID.");
-                return;
-            }
-
-            int airplaneId = int.Parse(txtAirplaneID.Text);
-            string model = txtModel.Text;
-            int capacity = 0;
-            string manufacturer = txtManufacturer.Text;
-
-            // Validate input
-            if (string.IsNullOrWhiteSpace(model) || !int.TryParse(txtCapacity.Text, out capacity) || capacity <= 0 || string.IsNullOrWhiteSpace(manufacturer))
-            {
-                MessageBox.Show("Please enter valid details for the airplane.");
-                return;
-            }
-
-            // Call the BLL method to update the airplane
-            if (airplaneBLL.UpdateAirplane(airplaneId, model, capacity, manufacturer))
-            {
-                MessageBox.Show("Airplane updated successfully.");
-                LoadAirplanes(); // Refresh the DataGridView
-                ClearFields(); // Clear the input fields
-            }
-            else
-            {
-                MessageBox.Show("Failed to update airplane.");
-            }
-        }
-
-        // Delete airplane
-        private void btnDelete_Click_1(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtAirplaneID.Text))
-            {
-                MessageBox.Show("Please enter a valid Airplane ID.");
-                return;
-            }
-
-            int airplaneId = int.Parse(txtAirplaneID.Text);
-
-            // Call the BLL method to delete the airplane
-            if (airplaneBLL.DeleteAirplane(airplaneId))
-            {
-                MessageBox.Show("Airplane deleted successfully.");
-                LoadAirplanes(); // Refresh the DataGridView
-                ClearFields(); // Clear the input fields
-            }
-            else
-            {
-                MessageBox.Show("Failed to delete airplane.");
-            }
-        }
 
         // Handle DataGridView row selection for update or delete
         private void dataGridViewAirplanes_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Check for valid row click
-            if (e.RowIndex >= 0)
+            // Check if the clicked cell is a button cell
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
-                txtAirplaneID.Text = dataGridViewAirplanes.Rows[e.RowIndex].Cells["AirplaneID"].Value.ToString();
-                txtModel.Text = dataGridViewAirplanes.Rows[e.RowIndex].Cells["Model"].Value.ToString();
-                txtCapacity.Text = dataGridViewAirplanes.Rows[e.RowIndex].Cells["Capacity"].Value.ToString();
-                txtManufacturer.Text = dataGridViewAirplanes.Rows[e.RowIndex].Cells["Manufacturer"].Value.ToString();
+                string columnName = dataGridViewAirplanes.Columns[e.ColumnIndex].HeaderText;
+
+                if (columnName == "Edit")
+                {
+                    // Handle Edit logic
+
+                    // Retrieve row data
+                    int AirplaneID = Convert.ToInt32(dataGridViewAirplanes.Rows[e.RowIndex].Cells["AirplaneID"].Value);
+                    string Model = dataGridViewAirplanes.Rows[e.RowIndex].Cells["Model"].Value.ToString();
+                    int Capacity = Convert.ToInt32(dataGridViewAirplanes.Rows[e.RowIndex].Cells["Capacity"].Value);
+                    string Manufacturer = dataGridViewAirplanes.Rows[e.RowIndex].Cells["Manufacturer"].Value.ToString();
+
+                    // Open the Update Form and pass the data
+                    UpdateAirplane updateForm = new UpdateAirplane(AirplaneID, Model, Capacity, Manufacturer);
+                    this.Close();
+                    updateForm.ShowDialog();
+                    // Refresh the DataGridView after updating (if needed)
+                    LoadAirplanes();
+
+                }
+                else if (columnName == "Delete")
+                {
+                    // Handle Delete logic
+                    int AirplaneID = (int)dataGridViewAirplanes.Rows[e.RowIndex].Cells["AirplaneID"].Value;
+
+                    // Call the BLL method to delete the airplane
+                    if (airplaneBLL.DeleteAirplane(AirplaneID))
+                    {
+                        MessageBox.Show("Airplane deleted successfully.");
+                        LoadAirplanes(); // Refresh the DataGridView
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to delete airplane.");
+                    }
+                }
             }
         }
-
-        // Clear input fields
-        private void ClearFields()
+        // Add Button
+        private void button1_Click_1(object sender, EventArgs e)
         {
-            txtAirplaneID.Clear();
-            txtModel.Clear();
-            txtCapacity.Clear();
-            txtManufacturer.Clear();
+            AddAirplane airplane = new AddAirplane();
+            airplane.Show();
+            this.Close();
         }
 
-        // Optional: Cancel button functionality to clear fields
-        private void btnClear_Click(object sender, EventArgs e)
+        private void btnAdd_Click_1(object sender, EventArgs e)
         {
-            ClearFields();
+
         }
 
-      
+
+       
     }
 }

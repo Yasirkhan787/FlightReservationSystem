@@ -65,6 +65,12 @@
     <Compile Include="BLL\UserBLL.cs" />
     <Compile Include="DAL\AirplaneDAL.cs" />
     <Compile Include="DAL\UserDAL.cs" />
+    <Compile Include="GUI\AddAirplane.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\AddAirplane.Designer.cs">
+      <DependentUpon>AddAirplane.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\AirplaneForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,8 +89,17 @@
     <Compile Include="GUI\RegisterForm.Designer.cs">
       <DependentUpon>RegisterForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\UpdateAirplane.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\UpdateAirplane.Designer.cs">
+      <DependentUpon>UpdateAirplane.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GUI\AddAirplane.resx">
+      <DependentUpon>AddAirplane.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\AirplaneForm.resx">
       <DependentUpon>AirplaneForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -93,6 +108,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\RegisterForm.resx">
       <DependentUpon>RegisterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\UpdateAirplane.resx">
+      <DependentUpon>UpdateAirplane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -26,7 +26,8 @@ namespace FlightReservationSystem.GUI
         {
 
         }
-
+        
+        // Login Button
         private void btnLogin_Click_1(object sender, EventArgs e)
         {
             string username = txtUsername.Text;
@@ -50,14 +51,18 @@ namespace FlightReservationSystem.GUI
             }
         }
 
-        private void btnRegister_Click_1(object sender, EventArgs e)
+        // Register Button
+        private void btnRegister_Click(object sender, EventArgs e)
         {
             // Open Register Form 
             RegisterForm registerForm = new RegisterForm();
             registerForm.Show();
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
 
         }
 
-        
     }
 }

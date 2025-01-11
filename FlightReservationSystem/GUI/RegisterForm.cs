@@ -23,7 +23,13 @@ namespace FlightReservationSystem.GUI
             userBLL = new UserBLL();  // Initialize the BLL
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void RegisterForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        // Register Button 
+        private void btnRegister_Click(object sender, EventArgs e)
         {
             string username = txtUsername.Text;
             string email = txtEmail.Text;
@@ -39,7 +45,7 @@ namespace FlightReservationSystem.GUI
                 return;
             }
 
-            bool isRegistered = userBLL.RegisterUser(username, email, name, role , password);
+            bool isRegistered = userBLL.RegisterUser(username, email, name, role, password);
 
             if (isRegistered)
             {
@@ -52,19 +58,19 @@ namespace FlightReservationSystem.GUI
             }
         }
 
-        private void btnLogin_Click(object sender, EventArgs e)
+        // Login Button
+        private void btnLogin_Click_1(object sender, EventArgs e)
         {
             // Open Login Form
-            LoginForm loginForm = new LoginForm();  
+            LoginForm loginForm = new LoginForm();
             loginForm.Show();
 
             // Close the current form
             this.Close();
         }
 
-        private void RegisterForm_Load(object sender, EventArgs e)
-        {
+        
 
-        }
+        
     }
 }
